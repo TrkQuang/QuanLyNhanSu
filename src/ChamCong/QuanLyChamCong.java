@@ -142,4 +142,20 @@ public void tongHopTuFile() {
             System.out.println("Lỗi ghi file: " + e.getMessage());
         }
     }
+    public void xoaFile(String filePath) {
+        try (FileWriter fw = new FileWriter(filePath)) {
+            fw.write(""); // Ghi chuỗi rỗng vào file clear hết data truocs
+        } catch (Exception e) {
+            System.out.println("Lỗi xóa file: " + e.getMessage());
+        }
+    }
+    public void xoaDuLieuChamCong() {
+        xoaFile("data/chamcong.txt");
+        System.out.println("Đã xóa dữ liệu chấm công ngày!");
+    }
+
+    public void xoaDuLieuCongThang() {
+        xoaFile("data/congThang.txt");
+        System.out.println("Đã xóa dữ liệu bảng tổng hợp tháng!");
+    }
 }

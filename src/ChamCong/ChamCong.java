@@ -1,8 +1,10 @@
 package ChamCong;
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.util.Scanner;
 
 public class ChamCong {
-    private static long sttTuTang = 1;
+    private static long sttTuTang = docSoDongFile("data/chamcong.txt") +1;
     private long stt;                  // STT của từng đối tượng
     private String maNS;      
     private String ngayCC;       
@@ -44,22 +46,48 @@ public class ChamCong {
     public void setTrangThai(DanhSachTrangThai trangThai) { this.trangThai = trangThai; }
     public double getSoGioLam() { return soGioLam; }
     public void setSoGioLam(double soGioLam) { this.soGioLam = soGioLam; }
-
+    //doc stt
+    public static long docSoDongFile(String path) {
+        long count = 0;
+        try (BufferedReader br = new BufferedReader(new FileReader(path))) {
+            while (br.readLine() != null) {
+                count++;
+            }
+        } catch (Exception e) {
+            // neu ko doc duoc gi het trả về 0
+        }
+        return count;
+    }
     //nhap
     public void nhap() {
         System.out.println("\n-----------------");
         System.out.print("Nhap vao ma nhan su: ");
         maNS = sc.nextLine();
-        System.out.print("Ấn Enter để lấy ngày hiện tại, hoặc nhập ngày (YYYY-MM-DD): ");
-        ngayCC = sc.nextLine();
-        if (ngayCC.isEmpty()) {
-            ngayCC = java.time.LocalDate.now().toString();
+        while (true) {
+            System.out.print("Ấn Enter để lấy ngày hiện tại, hoặc nhập ngày (YYYY-MM-DD): ");
+            ngayCC = sc.nextLine();
+            if (ngayCC.isEmpty()) {
+                ngayCC = java.time.LocalDate.now().toString();
+                break;
+            }
+            if (ngayCC.matches("\\d{4}-\\d{2}-\\d{2}")) { //hàm kiểm tra xem đúng định dạng yyyy-mm-dd ko
+                                                                // \\d là số (digit, [0-9])
+                                                                // \\w là chữ cái hoặc số (word, [A-Za-z0-9_])
+                                                                // [A-Za-z] là chữ cái (hoa hoặc thường)
+                break;
+            }
+            System.out.println("Ngày không đúng định dạng. Vui lòng nhập lại (YYYY-MM-DD)!");
         }
-        System.out.print("Trang thai(0: Di Lam, 1: Nghi khong luong, 2: Nghi co luong): ");
-        int n = sc.nextInt();
-        trangThai = DanhSachTrangThai.values()[n];
+    System.out.print("Trang thai(0: Di Lam, 1: Nghi khong luong, 2: Nghi co luong): ");
+    int n = Integer.parseInt(sc.nextLine());
+    trangThai = DanhSachTrangThai.values()[n];
+    if (trangThai.isNghi()) {
+        soGioLam = 0;
+        System.out.println("So gio lam: 0");
+    } else {
         System.out.print("So gio lam: ");
-        soGioLam = sc.nextDouble();
+        soGioLam = Double.parseDouble(sc.nextLine());
+    }
         System.out.println("---Da them thanh cong---");
     }
     public void xuat() {

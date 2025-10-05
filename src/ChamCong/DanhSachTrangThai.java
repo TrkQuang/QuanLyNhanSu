@@ -1,6 +1,16 @@
 package ChamCong;
 public enum DanhSachTrangThai {
-    DILAM,         // Đi làm bình thường
-    NGHIKOLUONG,   // Nghỉ không lương
-    NGHICOLUONG    // Nghỉ có lương
+    DILAM(false),
+    NGHIKOLUONG(true),
+    NGHICOLUONG(true);
+
+    private boolean laNghi; //check trang thai nghi
+
+    DanhSachTrangThai(boolean laNghi) {
+        this.laNghi = laNghi;
+    }
+
+    public boolean isNghi() {
+        return laNghi;
+    }
 }

@@ -99,4 +99,9 @@ public class Nhansu {
         System.out.println("Ma phong: " +maPhong);
         System.out.println("Ma chuc vu: " +machucvu);
     }
+    //toString
+    @Override
+    public String toString() {
+        return maNS + "," + ho + "," + ten + "," + ngaySinh + "," + gioitinh + "," + phucap + "," + maPhong + "," + machucvu;
+    }
 }

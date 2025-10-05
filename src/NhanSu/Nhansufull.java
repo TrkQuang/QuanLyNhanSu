@@ -42,6 +42,12 @@ public class Nhansufull extends Nhansu {
     @Override
     public void xuat() {
         super.xuat();
-        System.out.println("Ma luong: " +machucvu);
+        System.out.println("Luong co ban: " + luongcb);
+        System.out.println("Phu cap tham nien: " + phucapthamnien);
+    }
+
+    @Override
+    public String toString() {
+        return super.toString() + "," + luongcb + "," + phucapthamnien;
     }
 }

@@ -30,4 +30,9 @@ public class Nhansupart extends Nhansu {
         System.out.print("Nhập tiền công giờ: ");
         tienconggio = Float.parseFloat(sc.nextLine());
     }
+
+    @Override
+    public String toString() {
+        return super.toString() + "," + tienconggio;
+    }
 }
