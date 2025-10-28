@@ -1,5 +1,7 @@
 package NhanSu;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Scanner;
@@ -9,9 +11,13 @@ public class DanhSachNhanSu {
     private Nhansu ds[];
     private int n;
     Scanner sc = new Scanner(System.in);
+    //constructor
+    public DanhSachNhanSu() {
+    docFileVaoDs();
+    }
     //nhap
     public void nhap() {
-        System.out.print("So luong sinh vien muon nhap: ");
+        System.out.print("So luong nhan su muon nhap: ");
         n = sc.nextInt();
         ds = new Nhansu[n];
         for (int i = 0; i<n; i++) {
@@ -35,7 +41,7 @@ public class DanhSachNhanSu {
         }
         System.out.println("Da them thanh cong!");
     }
-    //ghi lên text
+    //ghi lên text (append mode - ghi tiếp vào cuối)
     public void ghiVaoFile(Nhansu a) {
         try (FileWriter fw = new FileWriter("data/Nhansu.txt", true)) { // true: ghi tiếp vào cuối file
             fw.write(a.toString() + "\n");
@@ -43,6 +49,18 @@ public class DanhSachNhanSu {
             System.out.println("Lỗi ghi file: " + e.getMessage());
         }
     }
+    
+    //ghi toàn bộ danh sách vào file (overwrite mode - ghi đè)
+    public void ghiTatCaVaoFile() {
+        try (FileWriter fw = new FileWriter("data/Nhansu.txt", false)) { // false: ghi đè toàn bộ
+            for (int i = 0; i < n; i++) {
+                fw.write(ds[i].toString() + "\n");
+            }
+        } catch (IOException e) {
+            System.out.println("Lỗi ghi file: " + e.getMessage());
+        }
+    }
+    
     //mở rộng mảng 1 phần tử
     public void morong() {
         Nhansu temp[] = new Nhansu[n+1];
@@ -129,4 +147,61 @@ public class DanhSachNhanSu {
         }
         return null;
     }
+
+    // Kiem tra nhan su co ton tai khong (tra ve true/false)
+    public boolean tonTaiNhanSu(String maNS) {
+        return timtheomaNS(maNS) != null;
+    }
+
+    public void docFileVaoDs() {
+        int count = 0;
+        try (BufferedReader br1 = new BufferedReader(new FileReader("data/Nhansu.txt"))) {
+            while (br1.readLine() != null) count++; // Đếm số dòng để tạo mảng
+        } catch (Exception e) {
+            System.out.println("Lỗi đọc file: " + e.getMessage());
+        }
+        ds = new Nhansu[count];
+        n = count;
+
+        try (BufferedReader br2 = new BufferedReader(new FileReader("data/Nhansu.txt"))) {
+            String line;
+            int i = 0;
+            while ((line = br2.readLine()) != null) {
+                String[] arr = line.split(",");
+                Nhansu ns = null;
+                if (arr.length == 10) { // FullTime: 8 trường + 2 trường full
+                    ns = new Nhansufull();
+                    ns.setMaNS(arr[0]);
+                    ns.setHo(arr[1]);
+                    ns.setTen(arr[2]);
+                    ns.setNgaySinh(arr[3]);
+                    ns.setGioitinh(arr[4]);
+                    ns.setPhucap(Float.parseFloat(arr[5]));
+                    ns.setMaPhong(arr[6]);
+                    ns.setMachucvu(arr[7]);
+                    ((Nhansufull) ns).setluongcb(Float.parseFloat(arr[8]));
+                    ((Nhansufull) ns).setphucapthamnien(Float.parseFloat(arr[9]));
+                } else if (arr.length == 9) { // PartTime: 8 trường + 1 trường part
+                    ns = new Nhansupart();
+                    ns.setMaNS(arr[0]);
+                    ns.setHo(arr[1]);
+                    ns.setTen(arr[2]);
+                    ns.setNgaySinh(arr[3]);
+                    ns.setGioitinh(arr[4]);
+                    ns.setPhucap(Float.parseFloat(arr[5]));
+                    ns.setMaPhong(arr[6]);
+                    ns.setMachucvu(arr[7]);
+                    ((Nhansupart) ns).settienconggio(Float.parseFloat(arr[8]));
+                }
+                ds[i] = ns;
+                i++;
+            }
+        } catch (Exception e) {
+            System.out.println("Lỗi đọc file: " + e.getMessage());
+        }
+    }
+    
+    // Getter methods để hỗ trợ module khác
+    public Nhansu[] getDs() { return ds; }
+    public int getSoluong() { return n; }
 }

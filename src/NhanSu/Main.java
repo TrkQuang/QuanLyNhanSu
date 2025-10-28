@@ -1,12 +1,22 @@
 package NhanSu;
 
 import java.util.Scanner;
+import Center.DataCenter;
 
 public class Main {
+    public static Scanner sc = new Scanner(System.in);
+
     public static void main(String[] args) {
-        Scanner sc = new Scanner(System.in);
-        DanhSachNhanSu dsn = new DanhSachNhanSu();
         DieuChinh dc = new DieuChinh();
+
+        // Doc du lieu chuc vu tu HSNS khi khoi dong
+        System.out.println("Dang tai du lieu he thong...");
+        try {
+            DataCenter.dsHSNS.docFile();
+            System.out.println("Da tai " + DataCenter.dsHSNS.getSoLuongCV() + " chuc vu tu file!");
+        } catch (Exception e) {
+            System.out.println("Khong tim thay file chuc vu. He thong se chay voi du lieu rong.");
+        }
 
         while (true) {
             System.out.println("\n===== QUAN LY NHAN SU - MENU CHINH =====");
@@ -25,28 +35,28 @@ public class Main {
 
             switch (chon) {
                 case 1:
-                    dsn.nhap();
+                    DataCenter.dsNhanSu.nhap();
                     break;
                 case 2:
-                    dsn.themNS();
+                    DataCenter.dsNhanSu.themNS();
                     break;
                 case 3:
                     try {
-                        dsn.xuat();
+                        DataCenter.dsNhanSu.xuat();
                     } catch (NullPointerException e) {
                         System.out.println("Danh sach rong. Chon 1 de nhap hoac 2 de them nhan su.");
                     }
                     break;
                 case 4:
                     try {
-                        dsn.xoaNS();
+                        DataCenter.dsNhanSu.xoaNS();
                     } catch (NullPointerException e) {
                         System.out.println("Danh sach rong. Khong co gi de xoa.");
                     }
                     break;
                 case 5:
                     try {
-                        Nhansu found = dsn.timtheomaNS();
+                        Nhansu found = DataCenter.dsNhanSu.timtheomaNS();
                         if (found != null) found.xuat();
                     } catch (NullPointerException e) {
                         System.out.println("Danh sach rong. Khong tim duoc.");
@@ -54,14 +64,13 @@ public class Main {
                     break;
                 case 6:
                     try {
-                        dc.chinhSua(dsn);
+                        dc.chinhSua(DataCenter.dsNhanSu);
                     } catch (NullPointerException e) {
                         System.out.println("Danh sach rong. Khong co nhan su de chinh sua.");
                     }
                     break;
                 case 0:
-                    System.out.println("Ket thuc chuong trinh.");
-                    sc.close();
+                    System.out.println("Quay ve menu chinh...");
                     return;
                 default:
                     System.out.println("Chuc nang khong hop le.");

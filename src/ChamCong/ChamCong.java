@@ -2,6 +2,7 @@ package ChamCong;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.Scanner;
+import Center.DataCenter;
 
 public class ChamCong {
     private static long sttTuTang = docSoDongFile("data/chamcong.txt") +1;
@@ -63,6 +64,10 @@ public class ChamCong {
         System.out.println("\n-----------------");
         System.out.print("Nhap vao ma nhan su: ");
         maNS = sc.nextLine();
+        while(!DataCenter.dsNhanSu.tonTaiNhanSu(maNS)){
+            System.out.print("Nhan su ko ton tai! Vui long nhap lai MaNS: ");
+            maNS=sc.nextLine();
+        }
         while (true) {
             System.out.print("Ấn Enter để lấy ngày hiện tại, hoặc nhập ngày (YYYY-MM-DD): ");
             ngayCC = sc.nextLine();

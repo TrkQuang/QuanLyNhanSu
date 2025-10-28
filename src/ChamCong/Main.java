@@ -1,11 +1,11 @@
 package ChamCong;
 import java.util.Scanner;
+import Center.DataCenter;
 
 public class Main {
-    public static void main(String[] args) {
-        Scanner sc = new Scanner(System.in);
-        QuanLyChamCong qlcc = new QuanLyChamCong();
+    public static Scanner sc = new Scanner(System.in);
 
+    public static void main(String[] args) {
         while (true) {
             System.out.println("\n===== MENU CHẤM CÔNG =====");
             System.out.println("1. Thêm bản ghi chấm công ngày (lưu vào file)");
@@ -20,26 +20,25 @@ public class Main {
 
             switch (chon) {
                 case 1:
-                    qlcc.ThemCC();
+                    DataCenter.qlcc.ThemCC();
                     break;
                 case 2:
-                    qlcc.xuatDanhSachNgayTuFile();
+                    DataCenter.qlcc.xuatDanhSachNgayTuFile();
                     break;
                 case 3:
-                    qlcc.tongHopTuFile();
+                    DataCenter.qlcc.tongHopTuFile();
                     break;
                 case 4:
-                    qlcc.xuatBangTongHopTuFile();
+                    DataCenter.qlcc.xuatBangTongHopTuFile();
                     break;
                 case 5:
-                    qlcc.xoaDuLieuChamCong();
+                    DataCenter.qlcc.xoaDuLieuChamCong();
                     break;
                 case 6:
-                    qlcc.xoaDuLieuCongThang();
+                    DataCenter.qlcc.xoaDuLieuCongThang();
                     break;
                 case 0:
                     System.out.println("Kết thúc chương trình!");
-                    sc.close();
                     return;
                 default:
                     System.out.println("Chức năng không hợp lệ!");

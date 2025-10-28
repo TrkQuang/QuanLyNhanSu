@@ -2,6 +2,8 @@ package NhanSu;
 
 import java.util.Scanner;
 
+import Center.DataCenter;
+
 public class Nhansu {
     //thuộc tính
     protected String maNS;
@@ -84,8 +86,22 @@ public class Nhansu {
     phucap = Float.parseFloat(sc.nextLine());
     System.out.print("Nhập mã phòng: ");
     maPhong = sc.nextLine();
-    System.out.print("Nhập mã chức vụ: ");
+    System.out.print("Nhập mã chức vụ (hoặc '0' để bỏ qua): ");
     machucvu = sc.nextLine();
+    if (machucvu.equals("0")) {
+        machucvu = "";
+        System.out.println("Bo qua nhap ma chuc vu.");
+    } else {
+        while(!DataCenter.dsHSNS.tonTaiChucVu(machucvu)){
+            System.out.print("Chuc vu ko ton tai! Vui long nhap lai Ma chuc vu (hoặc '0' để bỏ qua): ");
+            machucvu=sc.nextLine();
+            if (machucvu.equals("0")) {
+                machucvu = "";
+                System.out.println("!! Đã bỏ qua nhập mã chức vụ !!.");
+                break;
+            }
+        }
+    }
     }
     //xuat
     public void xuat() {
