@@ -24,16 +24,13 @@ public class Luong {
     private double heSoLuong;       // Hệ số lương từ chức vụ
     private double luongSauHeSo;    // Lương cơ bản × hệ số lương
     
-    // Các khoản thưởng
-    private double thuongModule;    // Thưởng từ module Thưởng (QUANLYTHUONG)
-    private double thuongDuAn;      // Thưởng từ phân công dự án (PhanCong)
+    // Phụ cấp và các khoản thưởng
+    private double phuCap;          // Phụ cấp từ nhân sự (lương cứng hàng tháng)
+    private double thuongModule;    // Thưởng từ module Thưởng
+    private double thuongDuAn;      // Thưởng từ phân công dự án
     
     // Tổng lương
-    private double tongLuong;       // = luongSauHeSo + thuongModule + thuongDuAn
-    
-    // Hệ số lương cơ bản
-    private static final double LUONG_NGAY = 500_000.0;  // 500k/ngày cho full-time
-    private static final double LUONG_GIO = 50_000.0;    // 50k/giờ cho part-time
+    private double tongLuong;       // = luongSauHeSo + phuCap + thuongModule + thuongDuAn
     
     Scanner sc = new Scanner(System.in);
     
@@ -47,13 +44,14 @@ public class Luong {
         this.luongCoBan = 0;
         this.heSoLuong = 1.0;  // Mặc định = 1.0
         this.luongSauHeSo = 0;
+        this.phuCap = 0;
         this.thuongModule = 0;
         this.thuongDuAn = 0;
         this.tongLuong = 0;
     }
     
     public Luong(String maNS, int thang, int nam, double tongNgayLam, double tongGioLam,
-                 double luongCoBan, double heSoLuong, double thuongModule, double thuongDuAn) {
+                 double luongCoBan, double heSoLuong, double phuCap, double thuongModule, double thuongDuAn) {
         this.maNS = maNS;
         this.thang = thang;
         this.nam = nam;
@@ -62,9 +60,10 @@ public class Luong {
         this.luongCoBan = luongCoBan;
         this.heSoLuong = heSoLuong;
         this.luongSauHeSo = luongCoBan * heSoLuong;
+        this.phuCap = phuCap;
         this.thuongModule = thuongModule;
         this.thuongDuAn = thuongDuAn;
-        this.tongLuong = luongSauHeSo + thuongModule + thuongDuAn;
+        this.tongLuong = luongSauHeSo + phuCap + thuongModule + thuongDuAn;
     }
     
     // Getters
@@ -76,6 +75,7 @@ public class Luong {
     public double getLuongCoBan() { return luongCoBan; }
     public double getHeSoLuong() { return heSoLuong; }
     public double getLuongSauHeSo() { return luongSauHeSo; }
+    public double getPhuCap() { return phuCap; }
     public double getThuongModule() { return thuongModule; }
     public double getThuongDuAn() { return thuongDuAn; }
     public double getTongLuong() { return tongLuong; }
@@ -88,25 +88,37 @@ public class Luong {
     public void setTongGioLam(double tongGioLam) { this.tongGioLam = tongGioLam; }
     public void setLuongCoBan(double luongCoBan) { this.luongCoBan = luongCoBan; }
     public void setHeSoLuong(double heSoLuong) { this.heSoLuong = heSoLuong; }
+    public void setPhuCap(double phuCap) { this.phuCap = phuCap; }
     public void setThuongModule(double thuongModule) { this.thuongModule = thuongModule; }
     public void setThuongDuAn(double thuongDuAn) { this.thuongDuAn = thuongDuAn; }
     
     /**
-     * Tính lương cơ bản dựa trên công (chưa nhân hệ số)
-     * - Full-time: tính theo ngày (tongNgayLam * 500k)
-     * - Part-time: tính theo giờ (tongGioLam * 50k)
+     * Tính lương cơ bản dựa trên loại nhân sự và công
+     * - Nhansufull: tính theo ngày (tongNgayLam * luongcb từ Nhansufull)
+     * - Nhansupart: tính theo giờ (tongGioLam * tienconggio từ Nhansupart)
      */
     public void tinhLuongCoBan() {
-        // Ưu tiên tính theo ngày (full-time)
-        if (tongNgayLam > 0) {
-            this.luongCoBan = tongNgayLam * LUONG_NGAY;
-        }
-        // Nếu không có ngày làm, tính theo giờ (part-time)
-        else if (tongGioLam > 0) {
-            this.luongCoBan = tongGioLam * LUONG_GIO;
-        }
-        else {
+        // Tìm nhân sự để kiểm tra loại
+        Nhansu ns = DataCenter.dsNhanSu.timtheomaNS(this.maNS);
+
+        if (ns == null) {
+            System.out.println("Không tìm thấy nhân sự " + this.maNS);
             this.luongCoBan = 0;
+            return;
+        }
+        
+        // Kiểm tra loại nhân sự bằng instanceof
+        if (ns instanceof NhanSu.Nhansufull) {
+            // Full-time: tính theo ngày với lương cơ bản từ Nhansufull
+            NhanSu.Nhansufull nsFull = (NhanSu.Nhansufull) ns;
+            double luongCBNgay = nsFull.getluongcb();  // Lương cơ bản/ngày
+            this.luongCoBan = tongNgayLam * luongCBNgay;
+        } 
+        else if (ns instanceof NhanSu.Nhansupart) {
+            // Part-time: tính theo giờ với tiền công giờ từ Nhansupart
+            NhanSu.Nhansupart nsPart = (NhanSu.Nhansupart) ns;
+            double tienGio = nsPart.gettienconggio();  // Tiền công/giờ
+            this.luongCoBan = tongGioLam * tienGio;
         }
     }
     
@@ -117,7 +129,7 @@ public class Luong {
         // Tìm nhân sự
         Nhansu ns = DataCenter.dsNhanSu.timtheomaNS(this.maNS);
         if (ns == null) {
-            System.out.println("⚠️ Không tìm thấy nhân sự " + this.maNS);
+            System.out.println("Không tìm thấy nhân sự " + this.maNS);
             this.heSoLuong = 1.0; // Mặc định
             return;
         }
@@ -125,21 +137,37 @@ public class Luong {
         // Lấy mã chức vụ
         String maCV = ns.getMachucvu();
         if (maCV == null || maCV.trim().isEmpty()) {
-            System.out.println("⚠️ Nhân sự " + this.maNS + " chưa có chức vụ");
+            System.out.println("Nhân sự " + this.maNS + " chưa có chức vụ");
             this.heSoLuong = 1.0; // Mặc định
             return;
         }
         
         // Tìm chức vụ
-        CHUCVU cv = DataCenter.dsHSNS.timChucVu(maCV);
+        CHUCVU cv = DataCenter.dscv.timChucVu(maCV);
         if (cv == null) {
-            System.out.println("⚠️ Không tìm thấy chức vụ " + maCV);
+            System.out.println("Không tìm thấy chức vụ " + maCV);
             this.heSoLuong = 1.0; // Mặc định
             return;
         }
         
         // Lấy hệ số lương
         this.heSoLuong = cv.getHeSoLuong();
+    }
+    
+    /**
+     * Lấy phụ cấp từ nhân sự
+     */
+    public void layPhuCapTuNhanSu() {
+        // Tìm nhân sự
+        Nhansu ns = DataCenter.dsNhanSu.timtheomaNS(this.maNS);
+        if (ns == null) {
+            System.out.println("Không tìm thấy nhân sự " + this.maNS);
+            this.phuCap = 0;
+            return;
+        }
+        
+        // Lấy phụ cấp (float -> double)
+        this.phuCap = ns.getPhucap();
     }
     
     /**
@@ -150,10 +178,10 @@ public class Luong {
     }
     
     /**
-     * Tính tổng lương = (lương cơ bản × hệ số) + thưởng module + thưởng dự án
+     * Tính tổng lương = (lương cơ bản × hệ số) + phụ cấp + thưởng module + thưởng dự án
      */
     public void tinhTongLuong() {
-        this.tongLuong = this.luongSauHeSo + this.thuongModule + this.thuongDuAn;
+        this.tongLuong = this.luongSauHeSo + this.phuCap + this.thuongModule + this.thuongDuAn;
     }
     
     /**
@@ -196,22 +224,25 @@ public class Luong {
         System.out.println("  - Hệ số lương: x" + String.format("%.2f", heSoLuong));
         System.out.println("  - Lương sau hệ số: " + String.format("%,.0f", luongSauHeSo) + " VNĐ");
         System.out.println("--------------------------------");
+        System.out.println("Phụ cấp:");
+        System.out.println("  - Phụ cấp: " + String.format("%,.0f", phuCap) + " VNĐ");
+        System.out.println("--------------------------------");
         System.out.println("Thưởng:");
         System.out.println("  - Thưởng module: " + String.format("%,.0f", thuongModule) + " VNĐ");
         System.out.println("  - Thưởng dự án: " + String.format("%,.0f", thuongDuAn) + " VNĐ");
         System.out.println("================================");
-        System.out.println("💰 TỔNG LƯƠNG: " + String.format("%,.0f", tongLuong) + " VNĐ");
+        System.out.println("TỔNG LƯƠNG: " + String.format("%,.0f", tongLuong) + " VNĐ");
         System.out.println("================================\n");
     }
     
     /**
      * Chuyển thành chuỗi để ghi file
-     * Format: maNS,thang,nam,tongNgayLam,tongGioLam,luongCoBan,heSoLuong,thuongModule,thuongDuAn,tongLuong
+     * Format: maNS,thang,nam,tongNgayLam,tongGioLam,luongCoBan,heSoLuong,phuCap,thuongModule,thuongDuAn,tongLuong
      */
     public String toFileString() {
         return maNS + "," + thang + "," + nam + "," + 
                tongNgayLam + "," + tongGioLam + "," + 
-               luongCoBan + "," + heSoLuong + "," + 
+               luongCoBan + "," + heSoLuong + "," + phuCap + "," + 
                thuongModule + "," + thuongDuAn + "," + tongLuong;
     }
     
@@ -220,7 +251,7 @@ public class Luong {
      */
     public static Luong fromFileString(String line) {
         String[] arr = line.split(",");
-        if (arr.length < 10) return null;
+        if (arr.length < 11) return null;
         
         String maNS = arr[0].trim();
         int thang = Integer.parseInt(arr[1].trim());
@@ -229,11 +260,12 @@ public class Luong {
         double tongGioLam = Double.parseDouble(arr[4].trim());
         double luongCoBan = Double.parseDouble(arr[5].trim());
         double heSoLuong = Double.parseDouble(arr[6].trim());
-        double thuongModule = Double.parseDouble(arr[7].trim());
-        double thuongDuAn = Double.parseDouble(arr[8].trim());
+        double phuCap = Double.parseDouble(arr[7].trim());
+        double thuongModule = Double.parseDouble(arr[8].trim());
+        double thuongDuAn = Double.parseDouble(arr[9].trim());
         
         return new Luong(maNS, thang, nam, tongNgayLam, tongGioLam, 
-                        luongCoBan, heSoLuong, thuongModule, thuongDuAn);
+                        luongCoBan, heSoLuong, phuCap, thuongModule, thuongDuAn);
     }
     
     @Override

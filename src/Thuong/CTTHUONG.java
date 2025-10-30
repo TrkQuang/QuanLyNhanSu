@@ -7,14 +7,14 @@ public class CTTHUONG {
     private String maCTThuong;
     private String maNS;
     private Date ngayThuong;
-    private DMTHUONG[] dsThuong;      // Mảng danh mục thưởng
-    private int soLuongThuong;        // Số lượng loại thưởng
+    private String[] maDanhMucThuong;  // Mảng mã danh mục thưởng
+    private int soLuongThuong;         // Số lượng loại thưởng
 
     public CTTHUONG(){
         maCTThuong = "";
         maNS = "";
         ngayThuong = null;
-        dsThuong = new DMTHUONG[10];  // Tối đa 10 loại thưởng
+        maDanhMucThuong = new String[10];  // Tối đa 10 loại thưởng
         soLuongThuong = 0;
     }
 
@@ -22,7 +22,7 @@ public class CTTHUONG {
         this.maCTThuong = maCTThuong;
         this.maNS = maNS;
         this.ngayThuong = ngayThuong;
-        this.dsThuong = new DMTHUONG[10];
+        this.maDanhMucThuong = new String[10];
         this.soLuongThuong = 0;
     }
 
@@ -30,26 +30,29 @@ public class CTTHUONG {
         maCTThuong = CTT.maCTThuong;
         maNS = CTT.maNS;
         ngayThuong = CTT.ngayThuong;
-        dsThuong = new DMTHUONG[10];
+        maDanhMucThuong = new String[10];
         soLuongThuong = CTT.soLuongThuong;
-        // Copy danh sách thưởng
+        // Copy danh sách mã thưởng
         for (int i = 0; i < CTT.soLuongThuong; i++) {
-            this.dsThuong[i] = CTT.dsThuong[i];
+            this.maDanhMucThuong[i] = CTT.maDanhMucThuong[i];
         }
     }
 
     public String getMaCTThuong() { return maCTThuong; }
     public String getMaNS() { return maNS; }
     public Date getNgayThuong() { return ngayThuong; }
-    public DMTHUONG[] getDsThuong() { return dsThuong; }
+    public String[] getMaDanhMucThuong() { return maDanhMucThuong; }
     public int getSoLuongThuong() { return soLuongThuong; }
     
     // Tính tổng số tiền thưởng
     public double getTongSoTien() {
         double tong = 0;
         for (int i = 0; i < soLuongThuong; i++) {
-            if (dsThuong[i] != null) {
-                tong += dsThuong[i].getSoTienMacDinh();
+            if (maDanhMucThuong[i] != null) {
+                DMTHUONG dmt = DataCenter.dsdmt.timDanhMucThuong(maDanhMucThuong[i]);
+                if (dmt != null) {
+                    tong += dmt.getSoTienMacDinh();
+                }
             }
         }
         return tong;
@@ -58,13 +61,13 @@ public class CTTHUONG {
     public void setMaCTThuong(String maCTThuong) { this.maCTThuong = maCTThuong; }
     public void setMaNS(String maNS) { this.maNS = maNS; }
     public void setNgayThuong(Date ngayThuong) { this.ngayThuong = ngayThuong; }
-    public void setDsThuong(DMTHUONG[] dsThuong) { this.dsThuong = dsThuong; }
+    public void setMaDanhMucThuong(String[] maDanhMucThuong) { this.maDanhMucThuong = maDanhMucThuong; }
     public void setSoLuongThuong(int soLuongThuong) { this.soLuongThuong = soLuongThuong; }
 
-    // Thêm 1 danh mục thưởng vào chi tiết
-    public void themDanhMucThuong(DMTHUONG dmt) {
-        if (soLuongThuong < dsThuong.length) {
-            dsThuong[soLuongThuong] = dmt;
+    // Thêm 1 mã danh mục thưởng vào chi tiết
+    public void themMaDanhMucThuong(String maThuong) {
+        if (soLuongThuong < maDanhMucThuong.length) {
+            maDanhMucThuong[soLuongThuong] = maThuong;
             soLuongThuong++;
         } else {
             System.out.println("Đã đủ số lượng thưởng tối đa!");
@@ -96,7 +99,7 @@ public class CTTHUONG {
         int n = Integer.parseInt(sc.nextLine());
         soLuongThuong = 0;
         
-        for (int i = 0; i < n && i < dsThuong.length; i++) {
+        for (int i = 0; i < n && i < maDanhMucThuong.length; i++) {
             System.out.println("\n--- Danh muc thuong thu " + (i+1) + " ---");
             System.out.print("Nhap ma danh muc thuong (hoặc '0' để hủy): ");
             String maThuong = sc.nextLine();
@@ -107,7 +110,7 @@ public class CTTHUONG {
             }
 
             // Kiểm tra danh mục thưởng có tồn tại không
-            while(!DataCenter.qlThuong.tonTaiDanhMucThuong(maThuong)){
+            while(!DataCenter.dsdmt.tonTaiDanhMucThuong(maThuong)){
                 System.out.print("Danh muc thuong ko ton tai! Vui long nhap lai Ma thuong (hoặc '0' để hủy): ");
                 maThuong = sc.nextLine();
                 if (maThuong.equals("0")) {
@@ -117,10 +120,12 @@ public class CTTHUONG {
             }
             System.out.println("Ma danh muc thuong hop le!");
             
-            // Lấy danh mục thưởng từ DataCenter
-            DMTHUONG dmt = DataCenter.qlThuong.timDanhMucThuong(maThuong);
+            // Lưu mã danh mục thưởng
+            themMaDanhMucThuong(maThuong);
+            
+            // Hiển thị thông tin
+            DMTHUONG dmt = DataCenter.dsdmt.timDanhMucThuong(maThuong);
             if (dmt != null) {
-                themDanhMucThuong(dmt);
                 System.out.println("→ Ten thuong: " + dmt.getTenThuong() + ", So tien: " + dmt.getSoTienMacDinh());
             }
         }
@@ -132,11 +137,14 @@ public class CTTHUONG {
         System.out.println("Ma CT Thuong: " + maCTThuong + " | Ma NS: " + maNS + " | Ngay: " + ngayThuong);
         System.out.println("  Danh sach thuong (" + soLuongThuong + " loai):");
         for (int i = 0; i < soLuongThuong; i++) {
-            if (dsThuong[i] != null) {
-                System.out.print("    [" + (i+1) + "] ");
-                dsThuong[i].xuat();
+            if (maDanhMucThuong[i] != null) {
+                DMTHUONG dmt = DataCenter.dsdmt.timDanhMucThuong(maDanhMucThuong[i]);
+                if (dmt != null) {
+                    System.out.print("    [" + (i+1) + "] ");
+                    dmt.xuat();
+                }
             }
         }
-        System.out.println("Tong tien thuong: " + getTongSoTien());
+        System.out.println("  → Tong tien thuong: " + getTongSoTien());
     }
 }

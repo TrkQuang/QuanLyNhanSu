@@ -84,15 +84,29 @@ public class Nhansu {
     gioitinh = sc.nextLine();
     System.out.print("Nhập phụ cấp: ");
     phucap = Float.parseFloat(sc.nextLine());
-    System.out.print("Nhập mã phòng: ");
+    System.out.print("Nhập mã phòng (hoặc '0' để bỏ qua): ");
     maPhong = sc.nextLine();
+    if (maPhong.equals("0")) {
+        maPhong = "";
+        System.out.println("Bo qua nhap ma phong.");
+    } else {
+        while(!DataCenter.dspb.tonTaiPhongBan(maPhong)){
+            System.out.print("Phong ko ton tai! Vui long nhap lai ma phong (hoặc '0' để bỏ qua): ");
+            maPhong=sc.nextLine();
+            if (maPhong.equals("0")) {
+                maPhong = "";
+                System.out.println("!! Đã bỏ qua nhập mã phòng !!.");
+                break;
+            }
+        }
+    }
     System.out.print("Nhập mã chức vụ (hoặc '0' để bỏ qua): ");
     machucvu = sc.nextLine();
     if (machucvu.equals("0")) {
         machucvu = "";
         System.out.println("Bo qua nhap ma chuc vu.");
     } else {
-        while(!DataCenter.dsHSNS.tonTaiChucVu(machucvu)){
+        while(!DataCenter.dscv.tonTaiChucVu(machucvu)){
             System.out.print("Chuc vu ko ton tai! Vui long nhap lai Ma chuc vu (hoặc '0' để bỏ qua): ");
             machucvu=sc.nextLine();
             if (machucvu.equals("0")) {
@@ -102,7 +116,7 @@ public class Nhansu {
             }
         }
     }
-    }
+}
     //xuat
     public void xuat() {
         System.out.println("---------");

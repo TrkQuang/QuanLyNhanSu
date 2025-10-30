@@ -9,15 +9,6 @@ public class Main {
     public static void main(String[] args) {
         DieuChinh dc = new DieuChinh();
 
-        // Doc du lieu chuc vu tu HSNS khi khoi dong
-        System.out.println("Dang tai du lieu he thong...");
-        try {
-            DataCenter.dsHSNS.docFile();
-            System.out.println("Da tai " + DataCenter.dsHSNS.getSoLuongCV() + " chuc vu tu file!");
-        } catch (Exception e) {
-            System.out.println("Khong tim thay file chuc vu. He thong se chay voi du lieu rong.");
-        }
-
         while (true) {
             System.out.println("\n===== QUAN LY NHAN SU - MENU CHINH =====");
             System.out.println("1. Nhap danh sach nhan su (nhieu)");

@@ -45,7 +45,6 @@ public class Nhansufull extends Nhansu {
         System.out.println("Luong co ban: " + luongcb);
         System.out.println("Phu cap tham nien: " + phucapthamnien);
     }
-
     @Override
     public String toString() {
         return super.toString() + "," + luongcb + "," + phucapthamnien;

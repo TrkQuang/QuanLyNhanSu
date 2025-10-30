@@ -6,7 +6,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Scanner;
 
-public class DanhSachNhanSu {
+public class DanhSachNhanSu { 
     //thuoc tinh
     private Nhansu ds[];
     private int n;
@@ -31,15 +31,36 @@ public class DanhSachNhanSu {
             }
             if(chon == 1) {
                 ds[i] = new Nhansufull();
-                ds[i].nhap();
             }
             if(chon == 2) {
                 ds[i] = new Nhansupart();
-                ds[i].nhap();
             }
-            ghiVaoFile(ds[i]);
+            ds[n-1].nhap();
+            
+            // Kiểm tra trùng mã (bỏ qua phần tử cuối - chính nó)
+            boolean trung = false;
+            for (int j = 0; j < n; j++) {  // Chỉ duyệt đến n-1
+                if (ds[j] != null && ds[j].getMaNS().equalsIgnoreCase(ds[j-1].getMaNS())) {
+                    trung = true;
+                    break;
+                }
+            }
+            
+            while(trung) {
+                System.out.println("Nhan su voi maNS nay da ton tai, nhap lai!");
+                ds[n-1].nhap();
+                // Kiểm tra lại
+                trung = false;
+                for (int j = 0; i < n; i++) {
+                    if (ds[j] != null && ds[j].getMaNS().equalsIgnoreCase(ds[j-1].getMaNS())) {
+                        trung = true;
+                        break;
+                    }
+            }
+            }
+            ghiTatCaVaoFile();
+            System.out.println("Da them thanh cong!");
         }
-        System.out.println("Da them thanh cong!");
     }
     //ghi lên text (append mode - ghi tiếp vào cuối)
     public void ghiVaoFile(Nhansu a) {
@@ -70,6 +91,15 @@ public class DanhSachNhanSu {
         ds = temp;
         n++;
     }
+    public boolean KiemTraMaNS(Nhansu a) {
+        for(Nhansu temp : ds) {
+            if (a.getMaNS().equalsIgnoreCase(temp.getMaNS())) {
+                System.out.println("Ma NS Da ton tai vui long nhap lai");
+                return false;
+            }
+        }
+        return true;
+    }
     //thêm một nhân sự mới vào cuối list
     public void themNS() {
         morong();
@@ -80,14 +110,38 @@ public class DanhSachNhanSu {
         while (chon != 1 && chon != 2) {
             System.out.print("Vui long nhap lai(1: Fulltime, 2: Parttime): ");
             chon = sc.nextInt();
+            sc.nextLine();
         }
         if(chon == 1) {
             ds[n-1] = new Nhansufull();
-            }
+        }
         if(chon == 2) {
             ds[n-1] = new Nhansupart();
         }
         ds[n-1].nhap();
+        
+        // Kiểm tra trùng mã (bỏ qua phần tử cuối - chính nó)
+        boolean trung = false;
+        for (int i = 0; i < n-1; i++) {  // Chỉ duyệt đến n-2 (bỏ qua ds[n-1])
+            if (ds[i] != null && ds[i].getMaNS().equalsIgnoreCase(ds[n-1].getMaNS())) {
+                trung = true;
+                break;
+            }
+        }
+        
+        while(trung) {
+            System.out.println("Nhan su voi maNS nay da ton tai, nhap lai!");
+            ds[n-1].nhap();
+            // Kiểm tra lại
+            trung = false;
+            for (int i = 0; i < n-1; i++) {
+                if (ds[i] != null && ds[i].getMaNS().equalsIgnoreCase(ds[n-1].getMaNS())) {
+                    trung = true;
+                    break;
+                }
+            }
+        }
+        
         ghiVaoFile(ds[n-1]);
         System.out.println("Da them!");
     }

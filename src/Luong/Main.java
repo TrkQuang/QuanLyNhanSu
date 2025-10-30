@@ -14,20 +14,21 @@ public class Main {
         DataCenter.dsNhanSu.docFileVaoDs();
         
         // 2. Load chấm công (lương cơ bản)
-        DataCenter.qlcc.docCongThangTuFile();
+        DataCenter.qlct.docCongThangTuFile();
         
         // 3. Load thưởng (thưởng module)
-        DataCenter.qlThuong.docFile();
+        DataCenter.dsctt.docFile();
+        DataCenter.dsdmt.docFile();
         
         // 4. Load phòng ban và phân công (thưởng dự án)
-        DataCenter.qlPhongBan.docTuFilePhongBan();
-        DataCenter.qlPhongBan.docTuFileDeAn();
-        DataCenter.qlPhongBan.docTuFilePhanCong();
+        DataCenter.dspb.docTuFilePhongBan();
+        DataCenter.dsda.docTuFileDeAn();
+        DataCenter.dspc.docTuFilePhanCong();
         
         System.out.println("Da tai xong du lieu!\n");
         
         // Khởi động module quản lý lương
-        QuanLyLuong qlLuong = new QuanLyLuong();
+        Danhsachluong qlLuong = new Danhsachluong();
         qlLuong.menu();
         
         System.out.println("\nKet thuc chuong trinh quan ly luong.");
